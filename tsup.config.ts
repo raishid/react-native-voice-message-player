@@ -18,5 +18,6 @@ export default defineConfig({
   },
   experimentalDts: {
     entry: 'src/index.ts',
-  }
+  },
+  external: ['react', 'react-native']
 })
