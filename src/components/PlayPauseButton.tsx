@@ -1,8 +1,9 @@
 import React from 'react';
 import {Image, StyleSheet, TouchableOpacity} from 'react-native';
-import PropTypes from 'prop-types';
 
 import _theme from '../helpers/theme';
+
+import type { PlayPauseButtonProps } from '../types'
 
 const defaultSources = {
   playing: require('../assets/imgs/playing.png'),
@@ -47,11 +48,12 @@ const PlayPauseButton = ({
   theme = _theme,
   style,
   configSources = {},
-}) => {
+}: PlayPauseButtonProps) => {
   disabled = disabled || isLoading;
   const buttonAction = isDownloadable || isError ? onDownload : onPress;
   const sources = {...defaultSources, ...configSources};
-  theme = {..._theme, ...theme};
+  const selectedTheme = {..._theme, ...theme};
+
 
   let icon = sources.pause;
   if (isLoading) icon = sources.loading;
@@ -70,24 +72,12 @@ const PlayPauseButton = ({
         style={[
           styles.image,
           {
-            tintColor: disabled ? theme.colors.disabled : theme.colors.accent,
+            tintColor: disabled ? selectedTheme?.colors?.disabled : selectedTheme?.colors?.accent,
           },
         ]}
       />
     </TouchableOpacity>
   );
-};
-
-PlayPauseButton.propTypes = {
-  isPlaying: PropTypes.bool,
-  isDownloadable: PropTypes.bool,
-  onPress: PropTypes.func.isRequired,
-  onDownload: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
-  isLoading: PropTypes.bool,
-  isError: PropTypes.bool,
-  theme: PropTypes.object,
-  configSources: PropTypes.object,
 };
 
 const styles = StyleSheet.create({

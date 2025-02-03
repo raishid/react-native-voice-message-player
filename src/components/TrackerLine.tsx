@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import PropTypes from 'prop-types';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 import _theme from '../helpers/theme';
+
+import type { TrackerLineProps } from '../types'
 
 /**
  * TrackerLine component provides a slider-like interface to track progress.
@@ -31,9 +32,9 @@ const TrackerLine = ({
   onValuesChangeFinish,
   renderComponent,
   thumbColor,
-}) => {
+}: TrackerLineProps) => {
   if (!totalValue) return null;
-  theme = {..._theme, ...theme};
+  const selectedTheme = {..._theme, ...theme};
 
   const [containerWidth, setContainerWidth] = useState(0);
   const sliderLength = containerWidth;
@@ -57,44 +58,29 @@ const TrackerLine = ({
           onValuesChangeFinish(disabled ? currentValue : val[0])
         }
         selectedStyle={{
-          borderColor: disabled ? theme.colors.disabled : theme.colors.label,
+          borderColor: disabled ? selectedTheme?.colors?.disabled : selectedTheme?.colors?.label,
           height: 0,
           borderTopWidth: 1.5,
         }}
         step={1}
         snapped
         unselectedStyle={{
-          borderColor: theme.colors.secondary,
+          borderColor: selectedTheme?.colors?.secondary,
           height: 0,
           borderTopWidth: 1.5,
         }}
-        markerStyle={[
-          styles.marker,
-          {
-            backgroundColor: disabled
-              ? theme.colors.disabled
-              : thumbColor || theme.colors.secondaryLabel,
-            height: thumbSize,
-            width: thumbSize,
-            borderColor: theme.colors.primaryBackground,
-          },
-        ]}
+        markerStyle={{
+          ...styles.marker,
+          backgroundColor: disabled
+            ? selectedTheme?.colors?.disabled
+            : thumbColor || selectedTheme?.colors?.secondaryLabel,
+          height: thumbSize,
+          width: thumbSize,
+          borderColor: selectedTheme?.colors?.primaryBackground,
+        }}
       />
     </View>
   );
-};
-
-TrackerLine.propTypes = {
-  theme: PropTypes.object,
-  thumbSize: PropTypes.number,
-  disabled: PropTypes.bool,
-  totalValue: PropTypes.number,
-  currentValue: PropTypes.number,
-  onValuesChange: PropTypes.func.isRequired,
-  onValuesChangeStart: PropTypes.func.isRequired,
-  onValuesChangeFinish: PropTypes.func.isRequired,
-  renderComponent: PropTypes.func,
-  thumbColor: PropTypes.string,
 };
 
 const styles = StyleSheet.create({

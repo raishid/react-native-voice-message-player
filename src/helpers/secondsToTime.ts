@@ -4,7 +4,7 @@
  * @param {number} seconds - Total seconds.
  * @returns {string} Time in MM:SS format.
  */
-const secondsToTime = seconds => {
+const secondsToTime = (seconds: number): string => {
   const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
   const remainingSeconds = String(seconds % 60).padStart(2, '0');
   return `${minutes}:${remainingSeconds}`;

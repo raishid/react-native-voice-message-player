@@ -1,4 +1,4 @@
-# @carchaze/react-native-voice-message-player
+# @raishid/react-native-voice-message-player
 
 ![GitHub Stars](https://img.shields.io/github/stars/carchaze-org/react-native-voice-message-player?style=social)
 ![GitHub Forks](https://img.shields.io/github/forks/carchaze-org/react-native-voice-message-player?style=social)

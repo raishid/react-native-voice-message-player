@@ -1,8 +1,9 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import PropTypes from 'prop-types';
 
 import _theme from '../helpers/theme';
+
+import type { DownloadProgressBarProps } from '../types'
 
 /**
  * DownloadProgressBar component displays the progress of a download operation.
@@ -16,43 +17,37 @@ const DownloadProgressBar = ({
   percentage = 0,
   theme = _theme,
   renderComponent,
-}) => {
-  theme = {..._theme, ...theme};
+}: DownloadProgressBarProps) => {
+  const selectedTheme = {..._theme, ...theme};
   const displayPercentage = Math.min(
     100,
     Math.max(0, Math.floor(percentage)),
-  ).toFixed(1);
+  )
 
   if (renderComponent) {
-    return renderComponent({percentage: displayPercentage, theme});
+    return renderComponent({percentage: displayPercentage.toFixed(1), theme: selectedTheme});
   }
 
   return (
     <View
       style={[
         styles.triangle,
-        {backgroundColor: theme?.colors?.secondaryBackground},
+        {backgroundColor: selectedTheme.colors?.secondaryBackground},
       ]}>
       <View
         style={[
           styles.loader,
           {
             width: `${displayPercentage}%`,
-            backgroundColor: theme?.colors?.label,
+            backgroundColor: selectedTheme.colors?.label,
           },
         ]}
       />
-      <Text style={[styles.text, {color: theme.colors.accent}]}>
+      <Text style={[styles.text, {color: selectedTheme?.colors?.accent}]}>
         Downloading: {displayPercentage}%
       </Text>
     </View>
   );
-};
-
-DownloadProgressBar.propTypes = {
-  percentage: PropTypes.number,
-  theme: PropTypes.object,
-  renderComponent: PropTypes.func,
 };
 
 const styles = StyleSheet.create({

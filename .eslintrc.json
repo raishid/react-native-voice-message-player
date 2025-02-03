@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-native/all"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "react-native"
+  ],
+  "rules": {
+    "react-native/no-inline-styles": "warn",
+    "react-native/no-unused-styles": "warn",
+    "react-native/split-platform-components": "warn",
+    "react/prop-types": "off",
+    "no-unused-vars": "warn",
+    "no-console": "off"
+  }
+}

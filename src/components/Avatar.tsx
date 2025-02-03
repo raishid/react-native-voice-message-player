@@ -1,7 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import _theme from '../helpers/theme';
+
+import type { AvatarProps } from '../types'
 
 const AvatarIcon = require('../assets/imgs/avatar.png');
 const MicIcon = require('../assets/imgs/mic.png');
@@ -30,13 +31,14 @@ const Avatar = ({
   imageSource,
   micSource,
   micColor,
-}) => {
-  theme = {..._theme, ...theme};
+}: AvatarProps) => {
+  const selectedTheme = {..._theme, ...theme};
 
   return (
     <View style={styles.container}>
       {renderImage ? (
-        renderImage({imageSource})
+        imageSource &&
+          renderImage({imageSource})
       ) : (
         <TouchableOpacity
           disabled={disabled || !onImagePress}
@@ -44,20 +46,21 @@ const Avatar = ({
           onPress={onImagePress}
           style={[
             styles.avatarContainer,
-            {borderColor: theme.colors.secondary},
+            {borderColor: selectedTheme?.colors?.secondary},
           ]}>
           <Image
             source={imageSource || AvatarIcon}
             style={[
               styles.avatar,
               !imageSource && {
-                tintColor: theme.colors.secondary,
+                tintColor: selectedTheme?.colors?.secondary,
               },
             ]}
           />
         </TouchableOpacity>
       )}
       {renderMic ? (
+        micSource &&
         renderMic({micSource})
       ) : (
         <Image
@@ -65,7 +68,7 @@ const Avatar = ({
           style={[
             styles.mic,
             {
-              tintColor: micColor || theme.colors.secondaryLabel,
+              tintColor: micColor || selectedTheme?.colors?.secondaryLabel,
               [micPosition]: -6,
             },
           ]}
@@ -75,24 +78,11 @@ const Avatar = ({
   );
 };
 
-Avatar.propTypes = {
-  renderMic: PropTypes.func,
-  renderImage: PropTypes.func,
-  theme: PropTypes.shape({
-    colors: PropTypes.shape({
-      secondary: PropTypes.string.isRequired,
-      primary: PropTypes.string.isRequired,
-    }).isRequired,
-  }),
-  disabled: PropTypes.bool,
-  micPosition: PropTypes.oneOf(['left', 'right']),
-  onImagePress: PropTypes.func,
-  imageSource: Image.propTypes.source,
-  micSource: Image.propTypes.source,
-  micColor: PropTypes.string,
-};
-
 const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   avatarContainer: {
     height: 40,
     width: 40,

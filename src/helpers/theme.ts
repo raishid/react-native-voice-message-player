@@ -1,3 +1,4 @@
+import type { Itheme } from '../types'
 /**
  * Represents the color settings for the theme.
  * @typedef {Object} Colors
@@ -26,7 +27,6 @@
  * @property {number} roundness - The border radius for round elements.
  */
 
-/** @type {Theme} */
 export default {
   colors: {
     primary: '#FF3B30',
@@ -43,4 +43,4 @@ export default {
     family: undefined,
   },
   roundness: 12,
-};
+} as Itheme;

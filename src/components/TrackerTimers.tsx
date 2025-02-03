@@ -1,9 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {StyleSheet, View, Text, Image} from 'react-native';
+import { StyleSheet, View, Text, Image } from 'react-native';
 
 import secondsToTime from '../helpers/secondsToTime';
 import _theme from '../helpers/theme';
+
+import type { TrackerTimersProps } from '../types'
 
 const defaultStatusSources = {
   loading: require('../assets/imgs/clock-loader.png'),
@@ -46,8 +47,8 @@ const TrackerTimers = ({
   renderTimestamp,
   status,
   statusSources,
-}) => {
-  theme = {..._theme, ...theme};
+}: TrackerTimersProps) => {
+  const selectedTheme = {..._theme, ...theme};
   statusSources = {...defaultStatusSources, ...statusSources};
   return (
     <View style={styles.container}>
@@ -57,7 +58,7 @@ const TrackerTimers = ({
         <Text
           style={[
             styles.timerText,
-            {color: theme.colors.accent, fontFamily: theme?.typography?.family},
+            {color: selectedTheme?.colors?.accent, fontFamily: selectedTheme?.typography?.family},
           ]}>
           {secondsToTime(Math.floor(timer))}
         </Text>
@@ -71,14 +72,14 @@ const TrackerTimers = ({
             style={[
               styles.timestampText,
               {
-                color: theme.colors.accent,
-                fontFamily: theme?.typography?.family,
+                color: selectedTheme?.colors?.accent,
+                fontFamily: selectedTheme?.typography?.family,
               },
             ]}>
             {timestamp}
           </Text>
         )}
-        {statusSources?.[status] && (
+        {status && statusSources?.[status] && (
           <Image
             source={statusSources?.[status]}
             style={[
@@ -86,8 +87,8 @@ const TrackerTimers = ({
               {
                 tintColor:
                   status === 'double-check-viewed'
-                    ? theme.colors.primary
-                    : theme.colors.secondaryLabel,
+                    ? selectedTheme?.colors?.primary
+                    : selectedTheme?.colors?.secondaryLabel,
               },
             ]}
           />
@@ -122,22 +123,5 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-
-TrackerTimers.propTypes = {
-  theme: PropTypes.shape({
-    colors: PropTypes.shape({
-      accent: PropTypes.string.isRequired,
-    }),
-    typography: PropTypes.shape({
-      family: PropTypes.string,
-    }),
-  }).isRequired,
-  timer: PropTypes.number.isRequired,
-  timestamp: PropTypes.string.isRequired,
-  renderTimer: PropTypes.func,
-  renderTimestamp: PropTypes.func,
-  status: PropTypes.string,
-  statusSources: PropTypes.object,
-};
 
 export default TrackerTimers;
