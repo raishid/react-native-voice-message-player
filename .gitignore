@@ -130,4 +130,4 @@ dist
 .pnp.*
 .tsup
 lib/
-bun.lockb
+bun.lock*

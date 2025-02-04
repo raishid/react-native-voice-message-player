@@ -89,31 +89,31 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
     bottomProps: {
       bottomContainerStyle = {},
       bottomStatusSources = {},
-      renderBottom = () => null,
-      renderBottomTimer = () => null,
-      renderBottomTimestamp = () => null,
+      renderBottom,
+      renderBottomTimer,
+      renderBottomTimestamp,
     } = {},
     leftActionProps: {
       leftActionContainerStyle = {},
       leftActionSources = {},
-      renderLeftAction = () => null,
+      renderLeftAction,
     } = {},
     profileProps: {
       profileImageSource = {}, 
       profileMicSource = {},
       ProfileImagePressDisabled = false,
-      onProfileImagePress = () => null,
+      onProfileImagePress,
       profileContainerStyle = {},
       profilePosition = 'right',
-      renderProfile = () => null,
-      renderProfileImage = () => null,
-      renderProfileMic = () => null,
+      renderProfile,
+      renderProfileImage,
+      renderProfileMic,
     } = {},
     trackProps: {
-      onTrackChange = () => null,
-      onTrackChangeComplete = () => null,
-      onTrackChangeStart = () => null,
-      renderTrack = () => null,
+      onTrackChange,
+      onTrackChangeComplete,
+      onTrackChangeStart,
+      renderTrack,
     } = {},
     chatStatusProps: {
       isNew = false,
@@ -155,7 +155,7 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
   const [initializing, setInitializing] = useState(false);
   const [error, setError] = useState(false);
 
-  const soundRef = useRef(null);
+  const soundRef = useRef<Audio.Sound | null>(null);
 
   const selectedTheme = { ...theme, ...customTheme };
   const isURL = typeof audioSrc === 'string' && audioSrc?.startsWith('http');
@@ -165,29 +165,33 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
     duration - currentTime >= 0 ? duration - currentTime : duration;
 
   const playSound = () => {
-    //@ts-ignore
-    soundRef.current?.play(success => {
-      if (success) {
+    if(soundRef.current === null ) return
+    setIsPlaying(true);
+    soundRef.current.playAsync().then((res) => {
+      if(res.isLoaded){
         setCurrentTime(0);
         setIsPlaying(false);
+        soundRef.current?.setPositionAsync(0)
+
         typeof onPlay === 'function' && onPlay();
-      } else {
+
+      }else{
         const errorMsg = 'Playback failed due to audio decoding error';
         typeof onError === 'function' && onError(new Error(errorMsg));
         console.error(errorMsg);
+        return;
       }
-    });
-    setIsPlaying(true);
+    })
   };
   const pauseSound = () => {
-    setIsPlaying(false);
-    //@ts-ignore
-    soundRef.current.pause(() => {
-      setIsPlaying(false);
+    if(soundRef.current === null ) return
+    
+    soundRef.current.pauseAsync().then(() => {
+      setIsPlaying(false)
       typeof onPause === 'function' && onPause();
     });
   };
-  const downloadAndPlayAudio = () => {
+  const downloadAndPlayAudio = async () => {
     if (isURL) {
       setIsDownloaded(false);
       console.log('Received URL based sound.');
@@ -229,44 +233,6 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
         typeof onDownloadFailed === 'function' &&
           onDownloadFailed(new Error(errorMsg));
       })
-
-      // // Download the file
-      // RNFS.downloadFile({
-      //   fromUrl: audioSrc,
-      //   toFile: localPath,
-      //   progressDivider: 1,
-      //   begin: () => {},
-      //   progress: res => {
-      //     // Update the progress (percentage)
-      //     const progress = (res.bytesWritten / res.contentLength) * 100;
-      //     setDownloadProgress(progress);
-      //   },
-      // })
-      //   .promise.then(() => {
-      //     setIsDownloading(false);
-      //     console.info('Received URL downloaded successfully!');
-      //     typeof onDownloadSuccess === 'function' &&
-      //       onDownloadSuccess(localPath);
-      //     // Load the sound from the local file
-      //     RNFS.exists(localPath).then(isExist => {
-      //       if (isExist) {
-      //         RNFS.stat(localPath).then(stat => {
-      //           typeof onDownloadSaved === 'function' &&
-      //             onDownloadSaved(localPath);
-      //           console.info('Downloaded sound saved successfully!');
-      //           loadSound(localPath);
-      //         });
-      //       }
-      //     });
-      //   })
-      //   .catch(err => {
-      //     const errorMsg = 'Received URL threw error while downloading: ' + err;
-      //     console.error(errorMsg);
-      //     setError(true);
-      //     setIsDownloading(false);
-      //     typeof onDownloadFailed === 'function' &&
-      //       onDownloadFailed(new Error(errorMsg));
-      //   });
     } else {
       setIsDownloaded(true);
       console.log('Received Local URL based sound.');
@@ -281,92 +247,86 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
     }
   };
   const loadSound = async (filePath: string | number) => {
+    setInitializing(true)
     setIsDownloaded(true);
+
     typeof onLoadStart === 'function' && onLoadStart();
-    const _lastParam = (error: boolean) => {
-      setInitializing(false);
-      if (error) {
-        const errorMsg = 'Sound Initialized Failed: ' + error;
-        typeof onLoadFailed === 'function' && onLoadFailed(new Error(errorMsg));
-        typeof onError === 'function' && onError(new Error(errorMsg));
-        console.error(errorMsg);
-        setError(error);
-        return;
-      }
-      console.info('Sound Initialized Successfully!');
-      //@ts-ignore
-      let duration = soundRef.current.getDuration();
 
-      typeof onLoadSuccess === 'function' && onLoadSuccess(soundRef.current);
-
-      setDuration(duration);
-    };
-
-    setInitializing(true);
     console.log('Initializing Sound...');
-    // soundRef.current = new Sound(
-    //   filePath,
-    //   isURL || isLocalUrl ? '' : lastParam,
-    //   isURL || isLocalUrl ? lastParam : undefined,
-    // );
-    let soudSource;
+
+    let soudSource: number | { uri: string };
+
     if(typeof filePath === 'string'){
       soudSource = {uri: filePath}
     }else{
       soudSource = filePath
     }
-    
-    Audio.Sound.createAsync(soudSource, {
-    }, ({ isLoaded }) => {
-      if (!isLoaded) {
-        const errorMsg = 'Sound Initialized Failed: ' + error;
-        typeof onLoadFailed === 'function' && onLoadFailed(new Error(errorMsg));
-        typeof onError === 'function' && onError(new Error(errorMsg));
-        console.error(errorMsg);
-        setError(error);
-        return;
+    try {
+      const _sound = await Audio.Sound.createAsync(soudSource)
+
+      soundRef.current = _sound.sound
+
+      const soundstatus = await _sound.sound.getStatusAsync()
+
+      if(soundstatus.isLoaded && soundstatus.durationMillis){
+        setDuration(soundstatus.durationMillis / 1000)  
       }
-      console.info('Sound Initialized Successfully!');
+      
+      typeof onLoadSuccess === 'function' && onLoadSuccess(soundRef.current);
 
-      // let duration = soundRef.current.
+      console.info('Sound Initialized Successfully!');      
 
-      // typeof onLoadSuccess === 'function' && onLoadSuccess(soundRef.current);
+      setInitializing(false);
 
-      // setDuration(duration);
-    }).then(({ sound }) => {
-      //@ts-ignore
-      soundRef.current = sound
-    })
+    }catch (err){
+      setInitializing(false);
+      const errorMsg = 'Sound Initialized Failed: ' + error;
+      typeof onLoadFailed === 'function' && onLoadFailed(new Error(errorMsg));
+      typeof onError === 'function' && onError(new Error(errorMsg));
+      console.error(errorMsg);
+      setError(error);
+      return;
+    }
   };
+  
+
+  const unMount = async () => {
+    if(soundRef.current){
+      await soundRef.current.unloadAsync();
+      soundRef.current = null;
+    }
+  }
 
   useEffect(() => {
+    console.log({
+      initializing,
+      isDownloaded,
+      error,
+      renderTrack
+    });
+    
     if (typeof onLoading === 'function') {
       if (initializing || isDownloading) {
         onLoading();
       }
     }
   }, [initializing, isDownloading, onLoading]);
-  useEffect(() => {
-    if (isURL && autoDownload) {
-      downloadAndPlayAudio();
-    } else if (!isURL) {
-      downloadAndPlayAudio();
-    }
 
+  useEffect(() => {
+    downloadAndPlayAudio()
     return () => {
-      //@ts-ignore
-      soundRef.current && soundRef.current.release();
-      soundRef.current = null;
+      unMount();
     };
   }, [audioSrc, autoDownload]);
   useEffect(() => {
     // Start the timer when the component mounts
     const timer = setInterval(() => {
       if (soundRef.current) {
-        //@ts-ignore
-        soundRef.current.getCurrentTime(seconds => {
-          setCurrentTime(seconds);
-        });
+        soundRef.current.getStatusAsync().then((res) => {
+          if(res.isLoaded){
+            setCurrentTime(res.rate)
+          }
+        })
       }
     }, 1000); // Update every 1 second
 
@@ -544,17 +504,18 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
                       onTrackChangeStart();
                   }}
                   onValuesChangeFinish={value => {
-                    //@ts-ignore
-                    soundRef.current.setCurrentTime(value);
-                    if(value){
-                      setCurrentTime(value);
-                    }
-                    if (tempPause) {
-                      playSound();
-                      setTempPause(false);
-                    }
-                    if(typeof onTrackChangeComplete === 'function' && value){
-                      onTrackChangeComplete(value);
+                    if(soundRef.current){
+                      soundRef.current.setPositionAsync(value as number);
+                      if(value){
+                        setCurrentTime(value);
+                      }
+                      if (tempPause) {
+                        playSound();
+                        setTempPause(false);
+                      }
+                      if(typeof onTrackChangeComplete === 'function' && value){
+                        onTrackChangeComplete(value);
+                      }
                     }
                   }}
                 />

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 
 import _theme from '../helpers/theme';
@@ -37,7 +37,7 @@ const TrackerLine = ({
   const selectedTheme = {..._theme, ...theme};
 
   const [containerWidth, setContainerWidth] = useState(0);
-  const sliderLength = containerWidth;
+  const sliderLength = containerWidth;  
 
   if (renderComponent) {
     return renderComponent();

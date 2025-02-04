@@ -1,0 +1,5 @@
+.tsup
+bun.lock*
+tsup.config.ts
+.eslintignore 
+.eslintrc.json

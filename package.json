@@ -1,14 +1,15 @@
 {
   "name": "@raishid/react-native-voice-message-player",
-  "version": "1.0.5",
+  "version": "2.0.4",
   "description": "An intuitive and customizable React Native module for playing voice messages seamlessly in chat interfaces. This package offers out-of-the-box components and easy-to-use configurations to integrate voice message playback functionality in your application. Tailored for modern chat UI/UX, it supports various customization options, including theming, action buttons, and status callbacks, ensuring a fluid user experience.",
   "main": "./lib/index.cjs",
-  "module": "./lib/index.d.cts",
+  "types": "./lib/index.d.cts",
   "type": "module",
   "scripts": {
     "build": "tsup",
     "lint": "bun x oxlint@latest",
-    "clean": "bun x del-cli node_modules/ bun.lockb bun.lock lib/"
+    "clean": "bun x del-cli node_modules/ bun.lockb bun.lock lib/",
+    "prepublish": "tsup"
   },
   "repository": {
     "type": "git",
@@ -49,6 +50,7 @@
     "typescript": "^5.3.3"
   },
   "files": [
-    "lib/"
+    "lib/",
+    "src/"
   ]
 }

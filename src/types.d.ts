@@ -3,6 +3,7 @@ import type { ImageSourcePropType, ViewStyle, ImageRequireSource, ImageSourcePro
 import { DefaultStatusString, DefaultStatusSources } from "./components/TrackerTimers";
 import { DefaultActionSources } from "./components/PlayPauseButton";
 import { Ref } from 'react';
+import type { Audio } from 'expo-av';
 
 export interface Itheme {
   colors?: {
@@ -139,7 +140,7 @@ export interface VoiceMessagePlayerProps {
       duration: number;
       currentTime: number;
       setCurrentTime: (time: number) => void;
-      soundRef: Ref<any>;
+      soundRef: Audio.Sound | null;
     }) => JSX.Element;
     onTrackChange?: (value: number) => void;
     onTrackChangeComplete?: (value: number) => void;
@@ -169,6 +170,6 @@ export interface VoiceMessagePlayerProps {
   onDownloadSaved?: (localPath: string) => void;
   onDownloadFailed?: (error: Error) => void;
   onLoadStart?: () => void;
-  onLoadSuccess?: (ref: Ref<any>) => void;
+  onLoadSuccess?: (ref: Audio.Sound) => void;
   onLoadFailed?: (error: Error) => void;
 }
