@@ -1,16 +1,16 @@
-import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import React from "react";
+import { StyleSheet, View, Text, Image } from "react-native";
 
-import secondsToTime from '../helpers/secondsToTime';
-import _theme from '../helpers/theme';
+import secondsToTime from "../helpers/secondsToTime";
+import _theme from "../helpers/theme";
 
-import type { TrackerTimersProps } from '../types'
+import type { TrackerTimersProps } from "../types";
 
 const defaultStatusSources = {
-  loading: require('../assets/imgs/clock-loader.png'),
-  'single-check': require('../assets/imgs/single-check.png'),
-  'double-check': require('../assets/imgs/double-check.png'),
-  'double-check-viewed': require('../assets/imgs/double-check.png'),
+  loading: require("../assets/imgs/clock-loader.png"),
+  "single-check": require("../assets/imgs/single-check.png"),
+  "double-check": require("../assets/imgs/double-check.png"),
+  "double-check-viewed": require("../assets/imgs/double-check.png"),
 };
 
 /** @typedef {keyof defaultStatusSources} DefaultStatusString*/
@@ -48,25 +48,29 @@ const TrackerTimers = ({
   status,
   statusSources,
 }: TrackerTimersProps) => {
-  const selectedTheme = {..._theme, ...theme};
-  statusSources = {...defaultStatusSources, ...statusSources};
+  const selectedTheme = { ..._theme, ...theme };
+  statusSources = { ...defaultStatusSources, ...statusSources };
   return (
     <View style={styles.container}>
       {renderTimer ? (
-        renderTimer({timer})
+        renderTimer({ timer })
       ) : (
         <Text
           style={[
             styles.timerText,
-            {color: selectedTheme?.colors?.accent, fontFamily: selectedTheme?.typography?.family},
-          ]}>
+            {
+              color: selectedTheme?.colors?.accent,
+              fontFamily: selectedTheme?.typography?.family,
+            },
+          ]}
+        >
           {secondsToTime(Math.floor(timer))}
         </Text>
       )}
 
       <View style={styles.rightContainer}>
         {renderTimestamp ? (
-          renderTimestamp({timestamp})
+          renderTimestamp({ timestamp })
         ) : (
           <Text
             style={[
@@ -75,7 +79,8 @@ const TrackerTimers = ({
                 color: selectedTheme?.colors?.accent,
                 fontFamily: selectedTheme?.typography?.family,
               },
-            ]}>
+            ]}
+          >
             {timestamp}
           </Text>
         )}
@@ -86,7 +91,7 @@ const TrackerTimers = ({
               styles.statusIcon,
               {
                 tintColor:
-                  status === 'double-check-viewed'
+                  status === "double-check-viewed"
                     ? selectedTheme?.colors?.primary
                     : selectedTheme?.colors?.secondaryLabel,
               },
@@ -101,9 +106,9 @@ const TrackerTimers = ({
 // Styles associated with the component.
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     flex: 1,
   },
   timerText: {
@@ -113,14 +118,14 @@ const styles = StyleSheet.create({
     fontSize: 8,
   },
   rightContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   statusIcon: {
     height: 8,
     width: 10,
     marginLeft: 4,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
 });
 

@@ -1,16 +1,16 @@
-import React from 'react';
-import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import React, { useEffect, useState } from "react";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
-import _theme from '../helpers/theme';
+import _theme from "../helpers/theme";
 
-import type { PlayPauseButtonProps } from '../types'
+import type { PlayPauseButtonProps } from "../types";
 
 const defaultSources = {
-  playing: require('../assets/imgs/playing.png'),
-  pause: require('../assets/imgs/pause.png'),
-  download: require('../assets/imgs/download.png'),
-  loading: require('../assets/imgs/loading.png'),
-  error: require('../assets/imgs/error.png'),
+  playing: require("../assets/imgs/playing.png"),
+  pause: require("../assets/imgs/pause.png"),
+  download: require("../assets/imgs/download.png"),
+  loading: require("../assets/imgs/loading.png"),
+  error: require("../assets/imgs/error.png"),
 };
 
 /**
@@ -48,32 +48,41 @@ const PlayPauseButton = ({
   theme = _theme,
   style,
   configSources = {},
+  leftActionImgStyle,
 }: PlayPauseButtonProps) => {
   disabled = disabled || isLoading;
   const buttonAction = isDownloadable || isError ? onDownload : onPress;
-  const sources = {...defaultSources, ...configSources};
-  const selectedTheme = {..._theme, ...theme};
+  const sources = { ...defaultSources, ...configSources };
+  const selectedTheme = { ..._theme, ...theme };
 
+  const [icon, setIcon] = useState(sources.pause);
 
-  let icon = sources.pause;
-  if (isLoading) icon = sources.loading;
-  else if (isError) icon = sources.error;
-  else if (isDownloadable) icon = sources.download;
-  else if (isPlaying) icon = sources.playing;
+  useEffect(() => {
+    setIcon(sources.pause);
+
+    if (isLoading) setIcon(sources.loading);
+    if (isError) setIcon(sources.error);
+    if (isDownloadable) setIcon(sources.download);
+    if (isPlaying) setIcon(sources.playing);
+  }, [isPlaying, isDownloadable, isError, isLoading, isPlaying]);
 
   return (
     <TouchableOpacity
       disabled={disabled}
       activeOpacity={0.5}
       onPress={buttonAction}
-      style={[styles.container, style]}>
+      style={[styles.container, style]}
+    >
       <Image
         source={icon}
         style={[
           styles.image,
           {
-            tintColor: disabled ? selectedTheme?.colors?.disabled : selectedTheme?.colors?.accent,
+            tintColor: disabled
+              ? selectedTheme?.colors?.disabled
+              : selectedTheme?.colors?.accent,
           },
+          leftActionImgStyle,
         ]}
       />
     </TouchableOpacity>
@@ -82,17 +91,17 @@ const PlayPauseButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     height: 18,
-    tintColor: 'black',
+    tintColor: "black",
     width: 18,
     marginRight: 16,
     marginLeft: 8,
     marginVertical: 8,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
 });
 

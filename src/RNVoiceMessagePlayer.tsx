@@ -1,24 +1,31 @@
 // ReactNativeVoiceMessagePlayer.jsx
 
 // Default Imports
-import React, { useState, useRef, useEffect, useImperativeHandle, Ref } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  Ref,
+} from "react";
+import { View, Text, StyleSheet } from "react-native";
 // import Sound from 'react-native-sound';
-import { Audio } from 'expo-av'
+import { Audio, AVPlaybackStatus } from "expo-av";
 // import RNFS from 'react-native-fs';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 
 // Helpers Imports
-import theme from './helpers/theme';
+import theme from "./helpers/theme";
 
 // Components Imports
-import PlayPauseButton from './components/PlayPauseButton';
-import DownloadProgressBar from './components/DownloadProgressBar';
-import TrackerTimers from './components/TrackerTimers';
-import TrackerLine from './components/TrackerLine';
-import Profiling from './components/extraction/Profiling';
+import PlayPauseButton from "./components/PlayPauseButton";
+import DownloadProgressBar from "./components/DownloadProgressBar";
+import TrackerTimers from "./components/TrackerTimers";
+import TrackerLine from "./components/TrackerLine";
+import Profiling from "./components/extraction/Profiling";
 
-import type { VoiceMessagePlayerProps } from './types'
+import type { VoiceMessagePlayerProps } from "./types";
+import { format } from "date-fns";
 
 /**
  * React Native Voice Message Player Component to play and display voice messages.
@@ -84,7 +91,10 @@ import type { VoiceMessagePlayerProps } from './types'
  * @param {Function} [props.onLoadSuccess] - Callback when the audio loading is successful.
  * @param {Function} [props.onLoadFailed] - Callback when the audio loading fails.
  */
-const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => {
+const VoicePlayerComponent = (
+  props: VoiceMessagePlayerProps,
+  ref: Ref<any>
+) => {
   const {
     bottomProps: {
       bottomContainerStyle = {},
@@ -96,15 +106,16 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
     leftActionProps: {
       leftActionContainerStyle = {},
       leftActionSources = {},
+      leftActionImgStyle,
       renderLeftAction,
     } = {},
     profileProps: {
-      profileImageSource = {}, 
+      profileImageSource = {},
       profileMicSource = {},
       ProfileImagePressDisabled = false,
       onProfileImagePress,
       profileContainerStyle = {},
-      profilePosition = 'right',
+      profilePosition = "right",
       renderProfile,
       renderProfileImage,
       renderProfileMic,
@@ -118,7 +129,7 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
     chatStatusProps: {
       isNew = false,
       isPlayed = false,
-      status = 'single-check',
+      status = "single-check",
     } = {},
     timestamp,
     autoDownload,
@@ -137,13 +148,15 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
     onPlay,
     renderDownloadProgress,
     renderText,
-    textError = 'Audio is not playable',
-    textLoading = 'Loading...',
-    textNotDownloaded = 'Download voice message',
+    textError = "Audio is not playable",
+    textLoading = "Loading...",
+    textNotDownloaded = "Download voice message",
     source,
+    showProfileAvatar = false,
+    trackContainerStyle,
   } = props || {};
 
-  const audioSrc = typeof source === 'object' ? source.uri : source;
+  const audioSrc = typeof source === "object" ? source.uri : source;
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [tempPause, setTempPause] = useState(false);
@@ -157,47 +170,44 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
 
   const soundRef = useRef<Audio.Sound | null>(null);
 
+  const [time] = useState(timestamp ? timestamp : format(new Date(), "hh:mm"));
+
   const selectedTheme = { ...theme, ...customTheme };
-  const isURL = typeof audioSrc === 'string' && audioSrc?.startsWith('http');
-  // const isLocalUrl =
-  //   typeof audioSrc === 'string' && audioSrc?.startsWith('file');
+
+  const isURL = typeof audioSrc === "string" && audioSrc?.startsWith("http");
+
   const timerValue =
     duration - currentTime >= 0 ? duration - currentTime : duration;
 
   const playSound = () => {
-    if(soundRef.current === null ) return
+    if (soundRef.current === null) return;
     setIsPlaying(true);
     soundRef.current.playAsync().then((res) => {
-      if(res.isLoaded){
-        setCurrentTime(0);
-        setIsPlaying(false);
-        soundRef.current?.setPositionAsync(0)
-
-        typeof onPlay === 'function' && onPlay();
-
-      }else{
-        const errorMsg = 'Playback failed due to audio decoding error';
-        typeof onError === 'function' && onError(new Error(errorMsg));
+      if (res.isLoaded && res.isPlaying) {
+        typeof onPlay === "function" && onPlay();
+      } else {
+        const errorMsg = "Playback failed due to audio decoding error";
+        typeof onError === "function" && onError(new Error(errorMsg));
         console.error(errorMsg);
         return;
       }
-    })
+    });
   };
   const pauseSound = () => {
-    if(soundRef.current === null ) return
-    
+    if (soundRef.current === null) return;
+
     soundRef.current.pauseAsync().then(() => {
-      setIsPlaying(false)
-      typeof onPause === 'function' && onPause();
+      setIsPlaying(false);
+      typeof onPause === "function" && onPause();
     });
   };
   const downloadAndPlayAudio = async () => {
     if (isURL) {
       setIsDownloaded(false);
-      console.log('Received URL based sound.');
+      console.log("Received URL based sound.");
       setIsDownloading(true);
-      console.log('Downloading started...');
-      typeof onDownload === 'function' && onDownload();
+      console.log("Downloading started...");
+      typeof onDownload === "function" && onDownload();
 
       // Define the local file path
       // Generate a unique filename
@@ -205,37 +215,47 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
       const randomNum = Math.floor(Math.random() * 1000); // random number between 0 and 999
       const uniqueFileName = `audio_${timestamp}_${randomNum}.mp3`;
       const localPath = `${FileSystem.cacheDirectory}/${uniqueFileName}`;
-      console.log('Saving to: ', localPath);
+      console.log("Saving to: ", localPath);
 
-      const resumableD = FileSystem.createDownloadResumable(audioSrc, localPath, {}, (downloadProgress) => {
-        const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
-        setDownloadProgress(progress);
-      })
-      resumableD.downloadAsync().then((_uri) => {
-        setIsDownloading(false);
-        console.info('Received URL downloaded successfully!');
-        typeof onDownloadSuccess === 'function' &&
-          onDownloadSuccess(localPath);
+      const resumableD = FileSystem.createDownloadResumable(
+        audioSrc,
+        localPath,
+        {},
+        (downloadProgress) => {
+          const progress =
+            downloadProgress.totalBytesWritten /
+            downloadProgress.totalBytesExpectedToWrite;
+          setDownloadProgress(progress);
+        }
+      );
+      resumableD
+        .downloadAsync()
+        .then((_uri) => {
+          setIsDownloading(false);
+          console.info("Received URL downloaded successfully!");
+          typeof onDownloadSuccess === "function" &&
+            onDownloadSuccess(localPath);
 
-        FileSystem.getInfoAsync(localPath).then(({ exists, }) => {
-          if (exists) {
-            typeof onDownloadSaved === 'function' &&
-              onDownloadSaved(localPath);
-            console.info('Downloaded sound saved successfully!');
-            loadSound(localPath)
-          }
+          FileSystem.getInfoAsync(localPath).then(({ exists }) => {
+            if (exists) {
+              typeof onDownloadSaved === "function" &&
+                onDownloadSaved(localPath);
+              console.info("Downloaded sound saved successfully!");
+              loadSound(localPath);
+            }
+          });
         })
-      }).catch(err => {
-        const errorMsg = 'Received URL threw error while downloading: ' + err;
-        console.error(errorMsg);
-        setError(true);
-        setIsDownloading(false);
-        typeof onDownloadFailed === 'function' &&
-          onDownloadFailed(new Error(errorMsg));
-      })
+        .catch((err) => {
+          const errorMsg = "Received URL threw error while downloading: " + err;
+          console.error(errorMsg);
+          setError(true);
+          setIsDownloading(false);
+          typeof onDownloadFailed === "function" &&
+            onDownloadFailed(new Error(errorMsg));
+        });
     } else {
       setIsDownloaded(true);
-      console.log('Received Local URL based sound.');
+      console.log("Received Local URL based sound.");
       loadSound(audioSrc);
     }
   };
@@ -246,66 +266,79 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
       playSound();
     }
   };
+
+  const playBackOnStatus = async (res: AVPlaybackStatus) => {
+    if (res.isLoaded && res.isPlaying) {
+      const seg = res.positionMillis / 1000;
+      setCurrentTime(seg);
+    }
+    if (res.isLoaded && !res.isPlaying) {
+      if (res.durationMillis && res.durationMillis <= res.positionMillis) {
+        setCurrentTime(0);
+        setIsPlaying(false);
+        await soundRef.current?.pauseAsync();
+        await soundRef.current?.setPositionAsync(0);
+      }
+    }
+  };
+
   const loadSound = async (filePath: string | number) => {
-    setInitializing(true)
+    setInitializing(true);
     setIsDownloaded(true);
 
-    typeof onLoadStart === 'function' && onLoadStart();
+    typeof onLoadStart === "function" && onLoadStart();
 
-    console.log('Initializing Sound...');
+    console.log("Initializing Sound...");
 
     let soudSource: number | { uri: string };
 
-    if(typeof filePath === 'string'){
-      soudSource = {uri: filePath}
-    }else{
-      soudSource = filePath
+    if (typeof filePath === "string") {
+      soudSource = { uri: filePath };
+    } else {
+      soudSource = filePath;
     }
     try {
-      const _sound = await Audio.Sound.createAsync(soudSource)
+      const _sound = await Audio.Sound.createAsync(
+        soudSource,
+        {
+          positionMillis: 0,
+        },
+        playBackOnStatus
+      );
 
-      soundRef.current = _sound.sound
+      soundRef.current = _sound.sound;
 
-      const soundstatus = await _sound.sound.getStatusAsync()
+      const soundstatus = await _sound.sound.getStatusAsync();
 
-      if(soundstatus.isLoaded && soundstatus.durationMillis){
-        setDuration(soundstatus.durationMillis / 1000)  
+      if (soundstatus.isLoaded && soundstatus.durationMillis) {
+        setDuration(soundstatus.durationMillis / 1000);
       }
-      
-      typeof onLoadSuccess === 'function' && onLoadSuccess(soundRef.current);
 
-      console.info('Sound Initialized Successfully!');      
+      typeof onLoadSuccess === "function" && onLoadSuccess(soundRef.current);
+
+      console.info("Sound Initialized Successfully!");
 
       setInitializing(false);
-
-    }catch (err){
+    } catch (err) {
       setInitializing(false);
-      const errorMsg = 'Sound Initialized Failed: ' + error;
-      typeof onLoadFailed === 'function' && onLoadFailed(new Error(errorMsg));
-      typeof onError === 'function' && onError(new Error(errorMsg));
+      const errorMsg = "Sound Initialized Failed: " + error;
+      typeof onLoadFailed === "function" && onLoadFailed(new Error(errorMsg));
+      typeof onError === "function" && onError(new Error(errorMsg));
       console.error(errorMsg);
       setError(error);
       return;
     }
   };
-  
 
   const unMount = async () => {
-    if(soundRef.current){
+    if (soundRef.current) {
       await soundRef.current.unloadAsync();
       soundRef.current = null;
     }
-  }
+  };
 
   useEffect(() => {
-    console.log({
-      initializing,
-      isDownloaded,
-      error,
-      renderTrack
-    });
-    
-    if (typeof onLoading === 'function') {
+    if (typeof onLoading === "function") {
       if (initializing || isDownloading) {
         onLoading();
       }
@@ -313,26 +346,11 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
   }, [initializing, isDownloading, onLoading]);
 
   useEffect(() => {
-    downloadAndPlayAudio()
+    downloadAndPlayAudio();
     return () => {
       unMount();
     };
   }, [audioSrc, autoDownload]);
-  useEffect(() => {
-    // Start the timer when the component mounts
-    const timer = setInterval(() => {
-      if (soundRef.current) {
-        soundRef.current.getStatusAsync().then((res) => {
-          if(res.isLoaded){
-            setCurrentTime(res.rate)
-          }
-        })
-      }
-    }, 1000); // Update every 1 second
-
-    // Clear the timer when the component unmounts
-    return () => clearInterval(timer);
-  }, []);
 
   useImperativeHandle(ref, () => ({
     play: playSound,
@@ -359,8 +377,9 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
           borderRadius: selectedTheme?.roundness,
         },
         containerStyle,
-      ]}>
-      {profilePosition === 'left' && (
+      ]}
+    >
+      {showProfileAvatar && profilePosition === "left" && (
         <View style={[styles.profileContainerStyle, profileContainerStyle]}>
           <Profiling
             micSource={profileMicSource}
@@ -376,13 +395,13 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
           />
         </View>
       )}
-      {typeof renderLeftAction === 'function' ? (
+      {typeof renderLeftAction === "function" ? (
         renderLeftAction({
           isLoading: initializing || isDownloading,
           isError: error,
           isDownloaded,
           isDownloading,
-          // isPlayin,
+          isPlaying,
         })
       ) : (
         <PlayPauseButton
@@ -396,11 +415,12 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
           isDownloadable={!isDownloaded}
           isLoading={initializing || isDownloading}
           isError={error}
+          leftActionImgStyle={leftActionImgStyle}
         />
       )}
 
-      <View style={styles.centerView}>
-        {typeof renderText === 'function' ? (
+      <View style={[styles.centerView, trackContainerStyle]}>
+        {typeof renderText === "function" ? (
           renderText({
             theme: selectedTheme,
             initializing,
@@ -425,7 +445,8 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
                       color: selectedTheme?.colors?.label,
                       fontFamily: selectedTheme?.typography?.family,
                     },
-                  ]}>
+                  ]}
+                >
                   {textNotDownloaded}
                 </Text>
               )}
@@ -433,7 +454,7 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
         )}
 
         {(initializing || error) && !isDownloading ? (
-          typeof renderText === 'function' ? (
+          typeof renderText === "function" ? (
             renderText({
               theme: selectedTheme,
               initializing,
@@ -452,14 +473,15 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
                   color: selectedTheme?.colors?.label,
                   fontFamily: selectedTheme?.typography?.family,
                 },
-              ]}>
+              ]}
+            >
               {initializing ? textLoading : error ? textError : null}
             </Text>
           )
         ) : (
           <React.Fragment>
             {isDownloading &&
-              (typeof renderDownloadProgress === 'function' ? (
+              (typeof renderDownloadProgress === "function" ? (
                 renderDownloadProgress({
                   progress: downloadProgress,
                   theme: selectedTheme,
@@ -471,7 +493,7 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
                 />
               ))}
             {!isDownloading &&
-              (typeof renderTrack === 'function' ? (
+              (typeof renderTrack === "function" ? (
                 renderTrack({
                   error,
                   theme: selectedTheme,
@@ -491,29 +513,32 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
                       ? selectedTheme?.colors?.primary
                       : selectedTheme?.colors?.secondaryLabel
                   }
-                  onValuesChange={value => {
+                  onValuesChange={async (value) => {
+                    await soundRef.current?.setPositionAsync(value * 1000);
                     setCurrentTime(value);
-                    typeof onTrackChange === 'function' && onTrackChange(value);
+                    typeof onTrackChange === "function" && onTrackChange(value);
                   }}
                   onValuesChangeStart={() => {
                     pauseSound();
                     if (isPlaying) {
                       setTempPause(true);
                     }
-                    typeof onTrackChangeStart === 'function' &&
+                    typeof onTrackChangeStart === "function" &&
                       onTrackChangeStart();
                   }}
-                  onValuesChangeFinish={value => {
-                    if(soundRef.current){
-                      soundRef.current.setPositionAsync(value as number);
-                      if(value){
+                  onValuesChangeFinish={(value) => {
+                    if (soundRef.current) {
+                      if (value) {
                         setCurrentTime(value);
                       }
                       if (tempPause) {
                         playSound();
                         setTempPause(false);
                       }
-                      if(typeof onTrackChangeComplete === 'function' && value){
+                      if (
+                        typeof onTrackChangeComplete === "function" &&
+                        value
+                      ) {
                         onTrackChangeComplete(value);
                       }
                     }
@@ -524,22 +549,26 @@ const VoicePlayerComponent = (props: VoiceMessagePlayerProps, ref: Ref<any>) => 
         )}
 
         <View style={[styles.timeContainer, bottomContainerStyle]}>
-          {typeof renderBottom === 'function' ? (
-            renderBottom({ theme: selectedTheme, timer: timerValue, timestamp })
+          {typeof renderBottom === "function" ? (
+            renderBottom({
+              theme: selectedTheme,
+              timer: timerValue,
+              timestamp: time,
+            })
           ) : (
             <TrackerTimers
               status={status}
               statusSources={bottomStatusSources}
               theme={selectedTheme}
               timer={timerValue}
-              timestamp={timestamp}
+              timestamp={time}
               renderTimer={renderBottomTimer}
               renderTimestamp={renderBottomTimestamp}
             />
           )}
         </View>
       </View>
-      {profilePosition === 'right' && (
+      {showProfileAvatar && profilePosition === "right" && (
         <Profiling
           micSource={profileMicSource}
           imageSource={profileImageSource}
@@ -563,21 +592,21 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 8,
     minHeight: 60,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     marginHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
   profileContainerStyle: {
-    position: 'relative',
+    position: "relative",
     marginHorizontal: 8,
   },
   centerView: {
     flex: 1,
-    flexDirection: 'row',
-    position: 'relative',
-    alignItems: 'center',
+    flexDirection: "row",
+    position: "relative",
+    alignItems: "center",
     height: 20,
     marginRight: 16,
   },
@@ -585,7 +614,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timeContainer: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     bottom: -10,

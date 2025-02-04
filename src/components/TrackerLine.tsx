@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
 
-import _theme from '../helpers/theme';
+import _theme from "../helpers/theme";
 
-import type { TrackerLineProps } from '../types'
+import type { TrackerLineProps } from "../types";
 
 /**
  * TrackerLine component provides a slider-like interface to track progress.
@@ -34,10 +34,13 @@ const TrackerLine = ({
   thumbColor,
 }: TrackerLineProps) => {
   if (!totalValue) return null;
-  const selectedTheme = {..._theme, ...theme};
+  const selectedTheme = { ..._theme, ...theme };
 
   const [containerWidth, setContainerWidth] = useState(0);
-  const sliderLength = containerWidth;  
+  const [sliderLength, setSliderSlength] = useState(0);
+  useEffect(() => {
+    setSliderSlength(containerWidth);
+  }, [containerWidth]);
 
   if (renderComponent) {
     return renderComponent();
@@ -46,19 +49,28 @@ const TrackerLine = ({
   return (
     <View
       style={styles.container}
-      onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}>
+      onLayout={(e) => {
+        const width = e.nativeEvent.layout.width;
+        const calculatedWidth = width - (width / 100) * 10;
+        setContainerWidth(calculatedWidth);
+      }}
+    >
       <MultiSlider
         min={0}
-        max={Number(totalValue)}
-        values={[Number(currentValue)]}
+        max={totalValue}
+        values={[currentValue]}
         sliderLength={sliderLength}
-        onValuesChange={val => onValuesChange(disabled ? currentValue : val[0])}
+        onValuesChange={(val) =>
+          onValuesChange(disabled ? currentValue : val[0])
+        }
         onValuesChangeStart={onValuesChangeStart}
-        onValuesChangeFinish={val =>
+        onValuesChangeFinish={(val) =>
           onValuesChangeFinish(disabled ? currentValue : val[0])
         }
         selectedStyle={{
-          borderColor: disabled ? selectedTheme?.colors?.disabled : selectedTheme?.colors?.label,
+          borderColor: disabled
+            ? selectedTheme?.colors?.disabled
+            : selectedTheme?.colors?.label,
           height: 0,
           borderTopWidth: 1.5,
         }}
@@ -86,8 +98,7 @@ const TrackerLine = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
   },
   marker: {
     shadowOpacity: 0,
