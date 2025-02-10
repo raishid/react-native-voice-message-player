@@ -3,7 +3,8 @@
   "compilerOptions": {
     "allowJs": true,
     "esModuleInterop": true,
-    "jsx": "react-native",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "node",
@@ -11,7 +12,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "target": "ESNext",
-    "types": ["react-native", "node"]
+    "types": ["react", "react-native", "node"]
   },
   "include": ["src"],
   "exclude": ["node_modules"]
