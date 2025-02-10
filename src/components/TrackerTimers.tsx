@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import secondsToTime from "../helpers/secondsToTime";
 import _theme from "../helpers/theme";
 
-import type { TrackerTimersProps } from "../types";
+import type { TrackerTimersProps } from "@types";
 
 const defaultStatusSources = {
   loading: require("../assets/imgs/clock-loader.png"),

@@ -6,13 +6,29 @@ import type {
   ViewStyle,
   ImageStyle,
 } from "react-native";
-import {
-  DefaultStatusString,
-  DefaultStatusSources,
-} from "./components/TrackerTimers";
-import { DefaultActionSources } from "./components/PlayPauseButton";
 import { Ref } from "react";
 import type { Audio } from "expo-av";
+
+type DefaultActionSources = {
+  playing: string;
+  pause: string;
+  download: string;
+  loading: string;
+  error: string;
+};
+
+type DefaultStatusString =
+  | "loading"
+  | "single-check"
+  | "double-check"
+  | "double-check-viewed";
+
+type DefaultStatusSources = {
+  loading: string;
+  "single-check": string;
+  "double-check": string;
+  "double-check-viewed": string;
+};
 
 export interface Itheme {
   colors?: {

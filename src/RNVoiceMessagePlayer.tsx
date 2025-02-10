@@ -24,7 +24,7 @@ import TrackerTimers from "./components/TrackerTimers";
 import TrackerLine from "./components/TrackerLine";
 import Profiling from "./components/extraction/Profiling";
 
-import type { VoiceMessagePlayerProps } from "./types";
+import type { VoiceMessagePlayerProps } from "@types";
 import { format } from "date-fns";
 
 /**
@@ -93,7 +93,7 @@ import { format } from "date-fns";
  */
 const VoicePlayerComponent = (
   props: VoiceMessagePlayerProps,
-  ref: Ref<any>
+  ref: Ref<any>,
 ) => {
   const {
     bottomProps: {
@@ -226,7 +226,7 @@ const VoicePlayerComponent = (
             downloadProgress.totalBytesWritten /
             downloadProgress.totalBytesExpectedToWrite;
           setDownloadProgress(progress);
-        }
+        },
       );
       resumableD
         .downloadAsync()
@@ -303,7 +303,7 @@ const VoicePlayerComponent = (
         {
           positionMillis: 0,
         },
-        playBackOnStatus
+        playBackOnStatus,
       );
 
       soundRef.current = _sound.sound;

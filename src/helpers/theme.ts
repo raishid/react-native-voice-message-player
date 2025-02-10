@@ -1,4 +1,4 @@
-import type { Itheme } from '../types'
+import type { Itheme } from "@types";
 /**
  * Represents the color settings for the theme.
  * @typedef {Object} Colors
@@ -29,15 +29,15 @@ import type { Itheme } from '../types'
 
 export default {
   colors: {
-    primary: '#FF3B30',
-    secondary: '#F1F1F1',
-    tertiary: '#FFFFFF',
-    primaryBackground: '#FFFFFF',
-    secondaryBackground: 'rgba(249,249,249,0.94)',
-    disabled: '#D1D1D6',
-    accent: '#000',
-    label: 'rgba(60,60,67,0.3)',
-    secondaryLabel: 'rgb(150,150,150)',
+    primary: "#FF3B30",
+    secondary: "#F1F1F1",
+    tertiary: "#FFFFFF",
+    primaryBackground: "#FFFFFF",
+    secondaryBackground: "rgba(249,249,249,0.94)",
+    disabled: "#D1D1D6",
+    accent: "#000",
+    label: "rgba(60,60,67,0.3)",
+    secondaryLabel: "rgb(150,150,150)",
   },
   typography: {
     family: undefined,

@@ -3,7 +3,7 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 import _theme from "../helpers/theme";
 
-import type { PlayPauseButtonProps } from "../types";
+import type { PlayPauseButtonProps } from "@types";
 
 const defaultSources = {
   playing: require("../assets/imgs/playing.png"),

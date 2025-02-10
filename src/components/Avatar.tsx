@@ -1,11 +1,11 @@
-import React from 'react';
-import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import _theme from '../helpers/theme';
+import React from "react";
+import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import _theme from "../helpers/theme";
 
-import type { AvatarProps } from '../types'
+import type { AvatarProps } from "@types";
 
-const AvatarIcon = require('../assets/imgs/avatar.png');
-const MicIcon = require('../assets/imgs/mic.png');
+const AvatarIcon = require("../assets/imgs/avatar.png");
+const MicIcon = require("../assets/imgs/mic.png");
 
 /**
  * Avatar component displays a user's avatar alongside a microphone icon.
@@ -26,19 +26,18 @@ const Avatar = ({
   renderImage,
   theme = _theme,
   disabled,
-  micPosition = 'left',
+  micPosition = "left",
   onImagePress,
   imageSource,
   micSource,
   micColor,
 }: AvatarProps) => {
-  const selectedTheme = {..._theme, ...theme};
+  const selectedTheme = { ..._theme, ...theme };
 
   return (
     <View style={styles.container}>
       {renderImage ? (
-        imageSource &&
-          renderImage({imageSource})
+        imageSource && renderImage({ imageSource })
       ) : (
         <TouchableOpacity
           disabled={disabled || !onImagePress}
@@ -46,8 +45,9 @@ const Avatar = ({
           onPress={onImagePress}
           style={[
             styles.avatarContainer,
-            {borderColor: selectedTheme?.colors?.secondary},
-          ]}>
+            { borderColor: selectedTheme?.colors?.secondary },
+          ]}
+        >
           <Image
             source={imageSource || AvatarIcon}
             style={[
@@ -60,8 +60,7 @@ const Avatar = ({
         </TouchableOpacity>
       )}
       {renderMic ? (
-        micSource &&
-        renderMic({micSource})
+        micSource && renderMic({ micSource })
       ) : (
         <Image
           source={micSource || MicIcon}
@@ -80,30 +79,30 @@ const Avatar = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   avatarContainer: {
     height: 40,
     width: 40,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
     borderWidth: 0.5,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   avatar: {
-    height: '100%',
-    width: '100%',
-    resizeMode: 'cover',
+    height: "100%",
+    width: "100%",
+    resizeMode: "cover",
     borderRadius: 20,
   },
   mic: {
     height: 15,
     width: 15,
-    resizeMode: 'contain',
-    position: 'absolute',
+    resizeMode: "contain",
+    position: "absolute",
     bottom: 3,
   },
 });

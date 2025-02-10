@@ -4,7 +4,7 @@ import MultiSlider from "@ptomasroos/react-native-multi-slider";
 
 import _theme from "../helpers/theme";
 
-import type { TrackerLineProps } from "../types";
+import type { TrackerLineProps } from "@types";
 
 /**
  * TrackerLine component provides a slider-like interface to track progress.
