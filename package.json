@@ -1,6 +1,6 @@
 {
   "name": "@raishid/react-native-voice-message-player",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "An intuitive and customizable React Native module for playing voice messages seamlessly in chat interfaces. This package offers out-of-the-box components and easy-to-use configurations to integrate voice message playback functionality in your application. Tailored for modern chat UI/UX, it supports various customization options, including theming, action buttons, and status callbacks, ensuring a fluid user experience.",
   "main": "./lib/index.cjs",
   "types": "./lib/index.d.cts",
@@ -39,10 +39,13 @@
   "homepage": "https://github.com/carchaze-org/react-native-voice-message-player#readme",
   "devDependencies": {
     "@microsoft/api-extractor": "^7.49.2",
+    "@types/esbuild-copy-static-files": "^0.1.4",
     "@types/react": "^18.3.12",
     "@types/react-native": "0.72.8",
     "@typescript-eslint/eslint-plugin": "^8.23.0",
     "@typescript-eslint/parser": "^8.23.0",
+    "esbuild-copy-static-files": "^0.1.0",
+    "esbuild-plugin-copy": "^2.1.1",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-native": "^5.0.0",
     "oxlint": "^0.15.9",
