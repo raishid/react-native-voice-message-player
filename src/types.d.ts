@@ -49,18 +49,20 @@ export interface ProfillingProps {
   isPlayed: boolean;
   onImagePress?: () => void;
   ProfileImagePressDisabled?: boolean;
-  renderProfileImage?: () => JSX.Element;
-  renderProfileMic?: () => JSX.Element;
+  renderProfileImage?: () => JSX.Element | null;
+  renderProfileMic?: () => JSX.Element | null;
   profilePosition: string;
   renderProfile?: (props: {
     micSource?: ImageSourcePropType;
     imageSource?: ImageSourcePropType;
-  }) => JSX.Element;
+  }) => JSX.Element | null;
 }
 
 export interface AvatarProps {
-  renderMic?: (props: { micSource: ImageSourcePropType }) => JSX.Element;
-  renderImage?: (props: { imageSource: ImageSourcePropType }) => JSX.Element;
+  renderMic?: (props: { micSource: ImageSourcePropType }) => JSX.Element | null;
+  renderImage?: (props: {
+    imageSource: ImageSourcePropType;
+  }) => JSX.Element | null;
   theme?: Itheme;
   disabled?: boolean;
   micPosition?: "left" | "right";
@@ -126,22 +128,22 @@ export interface VoiceMessagePlayerProps {
     profileMicSource: ImageSourcePropType;
     ProfileImagePressDisabled?: boolean;
     onProfileImagePress?: () => void;
-    renderProfileMic?: () => JSX.Element;
-    renderProfileImage?: () => JSX.Element;
-    renderProfile?: () => JSX.Element;
+    renderProfileMic?: () => JSX.Element | null;
+    renderProfileImage?: () => JSX.Element | null;
+    renderProfile?: () => JSX.Element | null;
     profileContainerStyle?: ViewStyle;
   };
 
   bottomProps?: {
-    renderBottomTimestamp?: () => JSX.Element;
-    renderBottomTimer?: () => JSX.Element;
+    renderBottomTimestamp?: () => JSX.Element | null;
+    renderBottomTimer?: () => JSX.Element | null;
     bottomStatusSources?: DefaultStatusSources;
     bottomContainerStyle?: ViewStyle;
     renderBottom?: (props: {
       theme: Itheme;
       timer?: number;
       timestamp: string;
-    }) => JSX.Element;
+    }) => JSX.Element | null;
   };
 
   leftActionProps?: {
@@ -185,7 +187,7 @@ export interface VoiceMessagePlayerProps {
     isDownloaded: boolean;
     autoDownload?: boolean;
     text: string;
-  }) => JSX.Element;
+  }) => JSX.Element | null;
   textNotDownloaded?: string;
   textLoading?: string;
   textError?: string;
