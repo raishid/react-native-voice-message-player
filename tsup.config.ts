@@ -1,23 +1,22 @@
-import { defineConfig } from 'tsup'
+import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entryPoints: ['src/index.ts'],
+  entryPoints: ["src/index.ts"],
   splitting: true,
-  sourcemap: true,
   clean: true,
-  outDir: 'lib',
+  outDir: "lib",
   esbuildOptions(options) {
-    options.loader = {
+    (options.loader = {
       ...options.loader,
       ".png": "file",
       ".jpg": "file",
       ".jpeg": "file",
       ".svg": "file",
-    },
-    options.assetNames = 'assets/[name]-[hash][extname]'
+    }),
+      (options.assetNames = "assets/[name]-[hash][extname]");
   },
   experimentalDts: {
-    entry: 'src/index.ts',
+    entry: "src/index.ts",
   },
-  external: ['react', 'react-native']
-})
+  external: ["react", "react-native"],
+});
