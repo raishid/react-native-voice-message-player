@@ -3,24 +3,16 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 import _theme from "../helpers/theme";
 
-import type { PlayPauseButtonProps } from "@types";
+import type { PlayPauseButtonProps, DefaultActionSources } from "@types";
+import type { ImageSourcePropType } from "react-native";
 
-const defaultSources = {
-  playing: require("../assets/imgs/playing.png"),
-  pause: require("../assets/imgs/pause.png"),
-  download: require("../assets/imgs/download.png"),
-  loading: require("../assets/imgs/loading.png"),
-  error: require("../assets/imgs/error.png"),
+const defaultSources: DefaultActionSources = {
+  playing: require("../assets/imgs/playing.png") as ImageSourcePropType,
+  pause: require("../assets/imgs/pause.png") as ImageSourcePropType,
+  download: require("../assets/imgs/download.png") as ImageSourcePropType,
+  loading: require("../assets/imgs/loading.png") as ImageSourcePropType,
+  error: require("../assets/imgs/error.png") as ImageSourcePropType,
 };
-
-/**
- * @typedef {Object} DefaultActionSources
- * @property {import("react-native").ImageSourcePropType} playing
- * @property {import("react-native").ImageSourcePropType} pause
- * @property {import("react-native").ImageSourcePropType} download
- * @property {import("react-native").ImageSourcePropType} loading
- * @property {import("react-native").ImageSourcePropType} error
- */
 
 /**
  * PlayPauseButton component that serves as a button for play, pause, downloading, etc.

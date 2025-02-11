@@ -5,17 +5,20 @@ export default defineConfig({
   splitting: true,
   clean: true,
   outDir: "lib",
-  minify: true,
+  format: "esm",
+  bundle: true,
+  // minify: true,
   experimentalDts: true,
   esbuildOptions(options) {
-    (options.loader = {
-      ...options.loader,
-      ".png": "file",
-      ".jpg": "file",
-      ".jpeg": "file",
-      ".svg": "file",
-    }),
-      (options.assetNames = "assets/[name]-[hash][extname]");
+    (options.jsx = "automatic"),
+      (options.loader = {
+        ...options.loader,
+        ".png": "file",
+        ".jpg": "file",
+        ".jpeg": "file",
+        ".svg": "file",
+      }),
+      (options.assetNames = "assets/[name]-[hash]");
   },
-  external: ["react", "react-native"],
+  external: ["react", "react-native", "expo-av"],
 });

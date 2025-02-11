@@ -321,7 +321,7 @@ const VoicePlayerComponent = (
       setInitializing(false);
     } catch (err) {
       setInitializing(false);
-      const errorMsg = "Sound Initialized Failed: " + error;
+      const errorMsg = "Sound Initialized Failed: " + err;
       typeof onLoadFailed === "function" && onLoadFailed(new Error(errorMsg));
       typeof onError === "function" && onError(new Error(errorMsg));
       console.error(errorMsg);

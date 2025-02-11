@@ -10,11 +10,11 @@ import { Ref } from "react";
 import type { Audio } from "expo-av";
 
 type DefaultActionSources = {
-  playing: string;
-  pause: string;
-  download: string;
-  loading: string;
-  error: string;
+  playing: ImageSourcePropType;
+  pause: ImageSourcePropType;
+  download: ImageSourcePropType;
+  loading: ImageSourcePropType;
+  error: ImageSourcePropType;
 };
 
 type DefaultStatusString =
@@ -24,10 +24,10 @@ type DefaultStatusString =
   | "double-check-viewed";
 
 type DefaultStatusSources = {
-  loading: string;
-  "single-check": string;
-  "double-check": string;
-  "double-check-viewed": string;
+  loading: ImageSourcePropType;
+  "single-check": ImageSourcePropType;
+  "double-check": ImageSourcePropType;
+  "double-check-viewed": ImageSourcePropType;
 };
 
 export interface Itheme {

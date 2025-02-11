@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import _theme from "../helpers/theme";
+import type { ImageSourcePropType } from "react-native";
 
 import type { AvatarProps } from "@types";
 
-const AvatarIcon = require("../assets/imgs/avatar.png");
-const MicIcon = require("../assets/imgs/mic.png");
+const AvatarIcon = require("../assets/imgs/avatar.png") as ImageSourcePropType;
+const MicIcon = require("../assets/imgs/mic.png") as ImageSourcePropType;
 
 /**
  * Avatar component displays a user's avatar alongside a microphone icon.

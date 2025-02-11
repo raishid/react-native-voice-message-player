@@ -4,13 +4,17 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import secondsToTime from "../helpers/secondsToTime";
 import _theme from "../helpers/theme";
 
-import type { TrackerTimersProps } from "@types";
+import type { TrackerTimersProps, DefaultStatusSources } from "@types";
+import type { ImageSourcePropType } from "react-native";
 
-const defaultStatusSources = {
-  loading: require("../assets/imgs/clock-loader.png"),
-  "single-check": require("../assets/imgs/single-check.png"),
-  "double-check": require("../assets/imgs/double-check.png"),
-  "double-check-viewed": require("../assets/imgs/double-check.png"),
+const defaultStatusSources: DefaultStatusSources = {
+  loading: require("../assets/imgs/clock-loader.png") as ImageSourcePropType,
+  "single-check":
+    require("../assets/imgs/single-check.png") as ImageSourcePropType,
+  "double-check":
+    require("../assets/imgs/double-check.png") as ImageSourcePropType,
+  "double-check-viewed":
+    require("../assets/imgs/double-check.png") as ImageSourcePropType,
 };
 
 /** @typedef {keyof defaultStatusSources} DefaultStatusString*/
